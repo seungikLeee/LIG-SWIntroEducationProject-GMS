@@ -213,10 +213,13 @@ CommandManager::start()
 			/*STDFUNCTION testPeriodic = std::bind(&CommandManager::testSend, this);
 			timerHandle = nTimer->addPeriodicTask(1000, testPeriodic);
 			this->testSend();*/
-			wchar_t* args = _T("SAAM");
+			/*wchar_t* args = _T("SAAM");
 			STDFUNCTION testPeriodic = std::bind(&CommandManager::testSendArgs, this, args);
 			timerHandle = nTimer->addPeriodicTask(1000, testPeriodic, (void*)args);
-			this->testSendArgs(args);
+			this->testSendArgs(args);*/
+
+			ntcout << _T("Before Send Scenario in CommandManager!") << std::endl;
+			this->testSend();
 		}
 		else if (cmdStr == _T("break"))
 		{
@@ -251,11 +254,40 @@ CommandManager::setMEBComponent(IMEBComponent* realMEB)
 void
 CommandManager::testSend()
 {
-	std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("EventReport"));
+	//std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
+	std::shared_ptr<NOM> setScenarioNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
+	//auto setScenarioNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
+
+	// Header
+	setScenarioNOM->setValue(_T("Id"), &NUShort(1001));
+	setScenarioNOM->setValue(_T("Size"), &NUShort(110));
+
+	// Radar
+	setScenarioNOM->setValue(_T("radarX"), &NDouble(10.0));
+	setScenarioNOM->setValue(_T("radarY"), &NDouble(10.0));
+	setScenarioNOM->setValue(_T("radarZ"), &NDouble(10.0));
+	setScenarioNOM->setValue(_T("radarMode"), &NUShort(1));
+
+	// Launcher
+	setScenarioNOM->setValue(_T("launcherX"), &NDouble(20.0));
+	setScenarioNOM->setValue(_T("launcherY"), &NDouble(20.0));
+	setScenarioNOM->setValue(_T("launcherZ"), &NDouble(20.0));
+
+	// Air Threat
+	setScenarioNOM->setValue(_T("airThreatId"), &NUShort(1));
+	setScenarioNOM->setValue(_T("airThreatInitX"), &NDouble(50.0));
+	setScenarioNOM->setValue(_T("airThreatInitY"), &NDouble(0.0));
+	setScenarioNOM->setValue(_T("airThreatInitZ"), &NDouble(100.0));
+	setScenarioNOM->setValue(_T("airThreatSpeed"), &NDouble(300.0));
+	setScenarioNOM->setValue(_T("airThreatDirectionX"), &NDouble(1.0));
+	setScenarioNOM->setValue(_T("airThreatDirectionY"), &NDouble(0.0));
+	setScenarioNOM->setValue(_T("airThreatDirectionZ"), &NDouble(0.0));
+
+	/*std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("EventReport"));
 	NUShort id = 7;
 	testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
 	NEnum evtType = 101;
-	testIntrNOM->setValue(_T("EventType"), &evtType);
+	testIntrNOM->setValue(_T("EventType"), &evtType);*/
 
 	//shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("SetData"));
 	//NUShort id = 7;
@@ -263,7 +295,8 @@ CommandManager::testSend()
 	//NUInteger requestIdentifier = 101;
 	//testIntrNOM->setValue(_T("RequestIdentifier"), &requestIdentifier);
 
-	this->sendMsg(testIntrNOM);
+	ntcout << _T("send Scenario Info in CommandManager!") << std::endl;
+	this->sendMsg(setScenarioNOM);
 }
 
 void

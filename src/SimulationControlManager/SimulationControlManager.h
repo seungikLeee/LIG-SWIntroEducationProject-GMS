@@ -1,29 +1,21 @@
-#pragma once
-#include <afxwin.h>
+ï»¿#pragma once
+#include <nFramework/BaseManager.h>
 #include <nFramework/mec/MECComponent.h>
 #include <nFramework/nom/NOMMain.h>
-#include <nFramework/BaseManager.h>
-#include "UITrackHandler.h"
 #include <nFramework/nLineStream/NLineStreamMain.h>
+#include <sstream>
 
 using namespace nframework;
 using namespace nom;
 using namespace nlinestream;
 
-struct NOMInfo
-{
-	TCHAR MsgName[1024];
-	unsigned int MsgID;
-	unsigned int MsgInstanceID;
-	int MsgLen;
-};
-
-class BASEMGRDLL_API NewRoleManager : public BaseManager
+class BASEMGRDLL_API SimulationControlManager : public BaseManager
 {
 public:
-	NewRoleManager(void);
-	~NewRoleManager(void);
+	SimulationControlManager(void);
+	~SimulationControlManager(void);
 
+public:
 	// inherited from the BaseManager class
 	virtual std::shared_ptr<NOM> registerMsg(tstring) override;
 	virtual void discoverMsg(std::shared_ptr<NOM>) override;
@@ -46,17 +38,14 @@ private:
 
 private:
 	IMEBComponent* meb;
-	tstring managerName;
-	std::map<unsigned int, std::shared_ptr<NOM>> registeredMsg;
-	std::map<unsigned int, std::shared_ptr<NOM>> discoveredMsg;
+	MECComponent* mec;
+	tstring name;
+	std::map<unsigned int, std::shared_ptr<NOM>> registeredMsgMap;
+	std::map<unsigned int, std::shared_ptr<NOM>> discoveredMsgMap;
 
-	HWND winHandle;
-	std::unique_ptr<UITrackHandler> uiTrackHandler;
+	std::shared_ptr<NOM> testObjNOM;
 
-	NLineTstream ntcout{ Level::COUT };
-
-	// ¡Ø¡Ø¡Ø¡Ø MEC°¡ °¡Àå ¸ÕÀú ¼Ò¸êµÇ¾î¾ß ÇÔ. ¡Ø¡Ø¡Ø¡Ø
-	std::unique_ptr<MECComponent> mec;
+	NLineTstream ntcout { Level::COUT };
+	
 };
-
 

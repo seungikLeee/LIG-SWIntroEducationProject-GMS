@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{45CB52AD-8334-0964-7535-2B818EF60312}</ProjectGuid>
-    <RootNamespace>NewRoleManager</RootNamespace>
+    <ProjectGuid>{7EE80D1B-8BBB-4BEC-AE7A-A610A746DCB2}</ProjectGuid>
+    <RootNamespace>BarManager</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -133,7 +133,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDIr)bin\$(ProjectName)\$(ProjectName)d.dll</OutputFile>
       <AdditionalLibraryDirectories>$(NFW_DIR)\lib;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nLineStreamd.lib;MECd.lib;NOMd.lib;NICEd.lib;utild.lib;NTimerd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nLineStreamd.lib;nLineLogd.lib;MECd.lib;NOMd.lib;NICEd.lib;utild.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>Debug\$(ProjectName)d.pdb</ProgramDatabaseFile>
       <ImportLibrary>$(SolutionDir)lib\$(ProjectName)d.lib</ImportLibrary>
     </Link>
@@ -158,22 +158,22 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)bin/$(ProjectName)/$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>$(NFW_DIR)\lib;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nLineStream.lib;MEC.lib;NOM.lib;util.lib;MEB.lib;NTimer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nLineStream.lib;nLineLog.lib;MEC.lib;NOM.lib;util.lib;MEB.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>Release/$(TargetName).pdb</ProgramDatabaseFile>
       <ImportLibrary>$(SolutionDir)lib/$(ProjectName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="NewRoleManager.cpp" />
-    <ClCompile Include="UITrackHandler.cpp" />
+    <ClCompile Include="SimulationControlManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NewRoleManager.h" />
-    <ClInclude Include="UIMessageEnum.h" />
-    <ClInclude Include="UITrackHandler.h" />
+    <ClInclude Include="SimulationControlManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\bin\NewRoleManager\NewRoleManager.xml" />
+    <None Include="..\..\bin\SimulationControlManager\SimulationControlManager.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\bin\SimulationControlManager\SimulationControlManager.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
