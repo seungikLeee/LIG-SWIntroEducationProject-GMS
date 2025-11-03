@@ -2,22 +2,19 @@
 #include <nFramework/BaseManager.h>
 #include <nFramework/mec/MECComponent.h>
 #include <nFramework/nom/NOMMain.h>
-#include <nFramework/nTimer/NTimer.h>
 #include <nFramework/nLineStream/NLineStreamMain.h>
 #include <sstream>
-#include <chrono>
-
+#include "InterceptManagerHandler.h"
 
 using namespace nframework;
 using namespace nom;
 using namespace nlinestream;
 
-
-class BASEMGRDLL_API CommandManager : public BaseManager
+class BASEMGRDLL_API InterceptManager : public BaseManager
 {
 public:
-	CommandManager(void);
-	~CommandManager(void);
+	InterceptManager(void);
+	~InterceptManager(void);
 
 public:
 	// inherited from the BaseManager class
@@ -35,30 +32,24 @@ public:
 	virtual bool start() override;
 	virtual bool stop() override;
 	virtual void setMEBComponent(IMEBComponent*) override;
-	
-private:
-	void init();
-	void release();
 
-	void testSend();
-	void testSendArgs(wchar_t*);
-	void testStart();
-	void testLaunch();
+private:
+	void initialize();
+	void release();
 
 private:
 	IMEBComponent* meb;
-	MECComponent* mec;
+	//MECComponent* mec;
 	tstring name;
-	std::map<unsigned int, std::shared_ptr<NOM>> registeredMsg;
-	std::map<unsigned int, std::shared_ptr<NOM>> discoveredMsg;
+	std::map<unsigned int, std::shared_ptr<NOM>> registeredMsgMap;
+	std::map<unsigned int, std::shared_ptr<NOM>> discoveredMsgMap;
 
 	std::shared_ptr<NOM> testObjNOM;
-	NTimer* nTimer;
 
-	std::vector<tstring> weapons;
-
-	NLineTstream ntcout { Level::COUT };
-	NLineTstream ntcerr{ Level::CERR };
+	NLineTstream ntcout{ Level::COUT };
 	
+	std::shared_ptr<InterceptManagerHandler> interceptManagerHandler;
+
+	std::unique_ptr<MECComponent> mec;
 };
 

@@ -7,15 +7,14 @@
 using namespace nframework;
 using namespace nom;
 
-class MissileStatusManagerHandler {
+class InterceptManagerHandler {
 public:
-	MissileStatusManagerHandler(nframework::BaseManager*, nframework::IMEBComponent*);
-	~MissileStatusManagerHandler();
+	InterceptManagerHandler(nframework::BaseManager*, nframework::IMEBComponent*);
+	~InterceptManagerHandler();
 
 public:
 	void processMessage(std::shared_ptr<nframework::NOM>);
-	void processSetSimulationMode(std::shared_ptr<nframework::NOM>);
-	void processLaunchMissile(std::shared_ptr<nframework::NOM>);
+	void processSendGMSCommand(std::shared_ptr<nframework::NOM>);
 
 private:
 	void initialize();

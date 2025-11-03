@@ -19,8 +19,12 @@ MissileStatusManagerHandler::~MissileStatusManagerHandler()
 void MissileStatusManagerHandler::initialize()
 {
 	std::function<void(std::shared_ptr<nframework::NOM>)> nomMsgProc;
+	
 	nomMsgProc = std::bind(&MissileStatusManagerHandler::processSetSimulationMode, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("SimulationMode"), nomMsgProc));
+	
+	nomMsgProc = std::bind(&MissileStatusManagerHandler::processLaunchMissile, this, std::placeholders::_1);
+	nomProcessorMap.insert(std::make_pair(_T("LaunchMissile"), nomMsgProc));
 }
 
 void MissileStatusManagerHandler::release()
@@ -56,6 +60,21 @@ void MissileStatusManagerHandler::processSetSimulationMode(std::shared_ptr<nfram
 	ntcout << "mode: " << mode << std::endl;
 	
 	simulationMode = _simulationMode;
+}
+
+void MissileStatusManagerHandler::processLaunchMissile(std::shared_ptr<nframework::NOM> _launchMissile)
+{
+	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _launchMissile->getName() << std::endl;
+	ntcout << "Receive LaunchMissile Info in MissileStatusManager!" << std::endl;
+
+	auto msgId = _launchMissile->getValue(_T("msgId"))->toUShort();
+	auto length = _launchMissile->getValue(_T("length"))->toUShort();
+	auto fire = _launchMissile->getValue(_T("fire"))->toChar();
+
+	ntcout << "msgId: " << msgId << std::endl;
+	ntcout << "length: " << length << std::endl;
+	ntcout << "fire: " << fire << std::endl;
+
 }
 
 /*

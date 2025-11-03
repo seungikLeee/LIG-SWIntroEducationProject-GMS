@@ -226,6 +226,11 @@ CommandManager::start()
 			ntcout << _T("Before Simulation Start in CommandManager!") << std::endl;
 			this->testStart();
 		}
+		else if (cmdStr == _T("launch"))
+		{
+			ntcout << _T("Before Launch in CommandManager!") << std::endl;
+			this->testLaunch();
+		}
 		else if (cmdStr == _T("break"))
 		{
 			nTimer->removeTask(timerHandle);
@@ -338,6 +343,21 @@ void CommandManager::testStart()
 
 	ntcout << _T("Send Simulation Start in CommandManager!") << std::endl;
 	this->sendMsg(setSimModeNOM);
+}
+
+void CommandManager::testLaunch()
+{
+	std::shared_ptr<NOM> setSendGMSNOM = meb->getNOMInstance(getUserName(), _T("SendGMSCommand"));
+
+	// Header
+	setSendGMSNOM->setValue(_T("msgId"), &NUShort(1002));
+	setSendGMSNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
+
+	// Body
+	setSendGMSNOM->setValue(_T("fire"), &NCharacter(1)); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+
+	ntcout << _T("Send Launch Command in CommandManager!") << std::endl;
+	this->sendMsg(setSendGMSNOM);
 }
 
 /************************************************************************
