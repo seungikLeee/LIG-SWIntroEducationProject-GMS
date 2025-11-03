@@ -38,7 +38,7 @@ void ScenarioManagerHandler::processMessage(std::shared_ptr<nframework::NOM> nom
 	Busniess Logic
 ************************************************************************/
 /*
-* 시나리오를 저장하고 공중위협 통제 CSU로 송신하는 함수
+* 시나리오를 저장하고 CSU로 송신하는 함수
 * 매개변수: 시나리오 NOM 메세지
 * 반환값:void
 */
@@ -47,6 +47,50 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _scenario->getName() << std::endl;
 	ntcout << "recv Scenario Info in ScenarioManager!" << std::endl;
 
+	auto msgId = _scenario->getValue(_T("msgId"))->toUShort();
+	auto length = _scenario->getValue(_T("length"))->toUShort();
+
+	// Radar
+	auto radarX = _scenario->getValue(_T("radarX"))->toDouble();
+	auto radarY = _scenario->getValue(_T("radarY"))->toDouble();
+	auto radarZ = _scenario->getValue(_T("radarZ"))->toDouble();
+	auto radarMode = _scenario->getValue(_T("radarMode"))->toChar();
+
+	// Launcher
+	auto launcherX = _scenario->getValue(_T("launcherX"))->toDouble();
+	auto launcherY = _scenario->getValue(_T("launcherY"))->toDouble();
+	auto launcherZ = _scenario->getValue(_T("launcherZ"))->toDouble();
+
+	// AirThreat
+	auto airThreatId = _scenario->getValue(_T("airThreatId"))->toUShort();
+	auto airThreatInitX = _scenario->getValue(_T("airThreatInitX"))->toDouble();
+	auto airThreatInitY = _scenario->getValue(_T("airThreatInitY"))->toDouble();
+	auto airThreatInitZ = _scenario->getValue(_T("airThreatInitZ"))->toDouble();
+	auto airThreatSpeed = _scenario->getValue(_T("airThreatSpeed"))->toDouble();
+	auto airThreatDirectionX = _scenario->getValue(_T("airThreatDirectionX"))->toDouble();
+	auto airThreatDirectionY = _scenario->getValue(_T("airThreatDirectionY"))->toDouble();
+	auto airThreatDirectionZ = _scenario->getValue(_T("airThreatDirectionZ"))->toDouble();
+
+	ntcout << "msgId: " << msgId << std::endl;
+	ntcout << "length: " << length << std::endl;
+
+	ntcout << "Radar X: " << radarX << std::endl;
+	ntcout << "Radar Y: " << radarY << std::endl;
+	ntcout << "Radar Z: " << radarZ << std::endl;
+	ntcout << "Radar Mode: " << radarMode << std::endl;
+
+	ntcout << "Launcher X: " << launcherX << std::endl;
+	ntcout << "Launcher Y: " << launcherY << std::endl;
+	ntcout << "Launcher Z: " << launcherZ << std::endl;
+
+	ntcout << "Air Threat ID: " << airThreatId << std::endl;
+	ntcout << "Air Threat Init X: " << airThreatInitX << std::endl;
+	ntcout << "Air Threat Init Y: " << airThreatInitY << std::endl;
+	ntcout << "Air Threat Init Z: " << airThreatInitZ << std::endl;
+	ntcout << "Air Threat Speed: " << airThreatSpeed << std::endl;
+	ntcout << "Air Threat Dir X: " << airThreatDirectionX << std::endl;
+	ntcout << "Air Threat Dir Y: " << airThreatDirectionY << std::endl;
+	ntcout << "Air Threat Dir Z: " << airThreatDirectionZ << std::endl;
 	//STEP1: 시나리오 저장
 	//scenario = _scenario;
 

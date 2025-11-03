@@ -259,14 +259,14 @@ CommandManager::testSend()
 	//auto setScenarioNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
 
 	// Header
-	setScenarioNOM->setValue(_T("Id"), &NUShort(1001));
-	setScenarioNOM->setValue(_T("Size"), &NUShort(110));
+	setScenarioNOM->setValue(_T("msgId"), &NUShort(1001));
+	setScenarioNOM->setValue(_T("length"), &NUShort(110));
 
 	// Radar
 	setScenarioNOM->setValue(_T("radarX"), &NDouble(10.0));
 	setScenarioNOM->setValue(_T("radarY"), &NDouble(10.0));
 	setScenarioNOM->setValue(_T("radarZ"), &NDouble(10.0));
-	setScenarioNOM->setValue(_T("radarMode"), &NUShort(1));
+	setScenarioNOM->setValue(_T("radarMode"), &NCharacter(1));
 
 	// Launcher
 	setScenarioNOM->setValue(_T("launcherX"), &NDouble(20.0));
