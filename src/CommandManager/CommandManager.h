@@ -42,6 +42,7 @@ private:
 
 	void testSend();
 	void testSendArgs(wchar_t*);
+	void testStart();
 
 private:
 	IMEBComponent* meb;

@@ -165,9 +165,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SimulationControlManager.cpp" />
+    <ClCompile Include="SimulationControlManagerHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimulationControlManager.h" />
+    <ClInclude Include="SimulationControlManagerHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\SimulationControlManager\SimulationControlManager.ini" />

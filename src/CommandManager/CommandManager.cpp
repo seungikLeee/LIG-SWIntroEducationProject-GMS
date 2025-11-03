@@ -221,6 +221,11 @@ CommandManager::start()
 			ntcout << _T("Before Send Scenario in CommandManager!") << std::endl;
 			this->testSend();
 		}
+		else if (cmdStr == _T("start"))
+		{
+			ntcout << _T("Before Simulation Start in CommandManager!") << std::endl;
+			this->testStart();
+		}
 		else if (cmdStr == _T("break"))
 		{
 			nTimer->removeTask(timerHandle);
@@ -295,7 +300,7 @@ CommandManager::testSend()
 	//NUInteger requestIdentifier = 101;
 	//testIntrNOM->setValue(_T("RequestIdentifier"), &requestIdentifier);
 
-	ntcout << _T("send Scenario Info in CommandManager!") << std::endl;
+	ntcout << _T("Send Scenario Info in CommandManager!") << std::endl;
 	this->sendMsg(setScenarioNOM);
 }
 
@@ -318,6 +323,21 @@ CommandManager::testSendArgs(wchar_t* arg)
 	//testIntrNOM->setValue(_T("RequestIdentifier"), &requestIdentifier);
 
 	this->sendMsg(testIntrNOM);
+}
+
+void CommandManager::testStart()
+{
+	std::shared_ptr<NOM> setSimModeNOM = meb->getNOMInstance(getUserName(), _T("SetSimulationMode"));
+
+	// Header
+	setSimModeNOM->setValue(_T("msgId"), &NUShort(1002));
+	setSimModeNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
+
+	// Body
+	setSimModeNOM->setValue(_T("mode"), &NCharacter(1)); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+
+	ntcout << _T("Send Simulation Start in CommandManager!") << std::endl;
+	this->sendMsg(setSimModeNOM);
 }
 
 /************************************************************************
