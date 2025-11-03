@@ -92,15 +92,10 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 	ntcout << "Air Threat Dir Y: " << airThreatDirectionY << std::endl;
 	ntcout << "Air Threat Dir Z: " << airThreatDirectionZ << std::endl;
 	//STEP1: 시나리오 저장
-	//scenario = _scenario;
+	scenario = _scenario;
 
-	//STEP2: 공중위협 초기화 요청 송신
-	/*std::shared_ptr<nframework::NOM> reqAirThreatInitNOM = meb->getNOMInstance(userMgr->getUserName(), _T("ReqAirThreatInit"));
-	reqAirThreatInitNOM->setValue(_T("MessageID"), _scenario->getValue(_T("MessageID")));
-	reqAirThreatInitNOM->setValue(_T("ScenarioID"), _scenario->getValue(_T("ScenarioID")));
-	reqAirThreatInitNOM->setValue(_T("ScenarioName"), _scenario->getValue(_T("ScenarioName")));
-	reqAirThreatInitNOM->setDataTypeObjectByCopying(_T("AirThreatList"), _scenario->getDataTypeObject(_T("AirThreatList")));
-	reqAirThreatInitNOM->setDataTypeObjectByCopying(_T("Battery"), _scenario->getDataTypeObject(_T("Battery")));
-	reqAirThreatInitNOM->setDataTypeObjectByCopying(_T("RouteList"), _scenario->getDataTypeObject(_T("RouteList")));
-	userMgr->sendMsg(reqAirThreatInitNOM);*/
+	//STEP2: 발사대 초기 위치 정보만 추출
+	//To do
+	
+	//userMgr->sendMsg(reqAirThreatInitNOM);
 }

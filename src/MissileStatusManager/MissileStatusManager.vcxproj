@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7EE80D1B-8BBB-4BEC-AE7A-A610A746DCB2}</ProjectGuid>
-    <RootNamespace>BarManager</RootNamespace>
+    <ProjectGuid>{BEED4211-97CB-424D-BBF1-93E06FC36470}</ProjectGuid>
+    <RootNamespace>FooManager</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -133,7 +133,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDIr)bin\$(ProjectName)\$(ProjectName)d.dll</OutputFile>
       <AdditionalLibraryDirectories>$(NFW_DIR)\lib;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nLineStreamd.lib;nLineLogd.lib;MECd.lib;NOMd.lib;NICEd.lib;utild.lib;Ntimerd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nLineStreamd.lib;nLineLogd.lib;MECd.lib;NOMd.lib;NICEd.lib;utild.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>Debug\$(ProjectName)d.pdb</ProgramDatabaseFile>
       <ImportLibrary>$(SolutionDir)lib\$(ProjectName)d.lib</ImportLibrary>
     </Link>
@@ -164,18 +164,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SimulationControlManager.cpp" />
-    <ClCompile Include="SimulationControlManagerHandler.cpp" />
+    <ClCompile Include="MissileStatusManager.cpp" />
+    <ClCompile Include="MissileStatusManagerHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SimulationControlManager.h" />
-    <ClInclude Include="SimulationControlManagerHandler.h" />
+    <ClInclude Include="MissileStatusManager.h" />
+    <ClInclude Include="MissileStatusManagerHandler.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\bin\SimulationControlManager\SimulationControlManager.ini" />
+    <Xml Include="..\..\bin\MissileStatusManager\MissileStatusManager.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\bin\SimulationControlManager\SimulationControlManager.xml" />
+    <None Include="..\..\bin\MissileStatusManager\MissileStatusManager.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

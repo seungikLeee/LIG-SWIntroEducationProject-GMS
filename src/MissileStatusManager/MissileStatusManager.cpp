@@ -1,17 +1,15 @@
 ﻿#pragma once
 #include <nFramework/util/IniHandler.h>
-#include "SimulationControlManager.h"
+#include "MissileStatusManager.h"
 #include <map>
 
 /**
-* @ class: SimulationControlManager
+* @ class: MissileStatusManager
 * @ author : 하재희
 * @ version: 1.0
-* @ see also: SimulationControlHandler
+* @ see also: MissileStatusHandler
 * @ description: MEC 객체를 사용하기 위해 BaseManager 인터페이스를 사용받아 구현한 클래스
-*
 * @ date: 2023.11.4
-*
 **/
 
 
@@ -19,12 +17,12 @@
 /************************************************************************
 	constructor / destructor
 ************************************************************************/
-SimulationControlManager::SimulationControlManager(void)
+MissileStatusManager::MissileStatusManager(void)
 {
 	initialize();
 }
 
-SimulationControlManager::~SimulationControlManager(void)
+MissileStatusManager::~MissileStatusManager(void)
 {
 	release();
 }
@@ -33,12 +31,11 @@ SimulationControlManager::~SimulationControlManager(void)
 	initialize / release
 ************************************************************************/
 void
-SimulationControlManager::initialize(void)
+MissileStatusManager::initialize(void)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << std::endl;
 	
-	
-	setUserName(_T("SimulationControlManager"));
+	setUserName(_T("MissileStatusManager"));
 
 	// design by contract
 	mec = std::make_unique<MECComponent>();
@@ -46,7 +43,7 @@ SimulationControlManager::initialize(void)
 }
 
 void
-SimulationControlManager::release()
+MissileStatusManager::release()
 {
 	/*delete mec;
 	mec = nullptr;*/
@@ -57,7 +54,7 @@ SimulationControlManager::release()
 	inherited functions
 ************************************************************************/
 std::shared_ptr<NOM>
-SimulationControlManager::registerMsg(tstring msgName)
+MissileStatusManager::registerMsg(tstring msgName)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << msgName << std::endl;
 	
@@ -69,7 +66,7 @@ SimulationControlManager::registerMsg(tstring msgName)
 }
 
 void
-SimulationControlManager::discoverMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::discoverMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
 	
@@ -79,16 +76,13 @@ SimulationControlManager::discoverMsg(std::shared_ptr<NOM> nomMsg)
 }
 
 void
-SimulationControlManager::updateMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::updateMsg(std::shared_ptr<NOM> nomMsg)
 {
-	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
-	
-	
 	mec->updateMsg(nomMsg);
 }
 
 void
-SimulationControlManager::reflectMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::reflectMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
 	
@@ -96,7 +90,7 @@ SimulationControlManager::reflectMsg(std::shared_ptr<NOM> nomMsg)
 }
 
 void
-SimulationControlManager::deleteMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::deleteMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
 	
@@ -106,7 +100,7 @@ SimulationControlManager::deleteMsg(std::shared_ptr<NOM> nomMsg)
 }
 
 void
-SimulationControlManager::removeMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::removeMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
 	
@@ -116,7 +110,7 @@ SimulationControlManager::removeMsg(std::shared_ptr<NOM> nomMsg)
 }
 
 void
-SimulationControlManager::sendMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::sendMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
 	
@@ -125,49 +119,47 @@ SimulationControlManager::sendMsg(std::shared_ptr<NOM> nomMsg)
 }
 
 void
-SimulationControlManager::recvMsg(std::shared_ptr<NOM> nomMsg)
+MissileStatusManager::recvMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
-	simulationControlManagerHandler->processMessage(nomMsg);
-	/*nTimer = &(NTimer::getInstance());
-	STDFUNCTION periodicFunc = std::bind(&ScenarioManagerHandler::processPeriodicalUpdate, this);
-	timerHandle = nTimer->addPeriodicTask(1000, periodicFunc);*/
+	missileStatusManagerHandler->processMessage(nomMsg);
 	
 }
 
 
 void
-SimulationControlManager::setUserName(tstring userName)
+MissileStatusManager::setUserName(tstring userName)
 {
 	name = userName;
 }
 
 tstring
-SimulationControlManager::getUserName()
+MissileStatusManager::getUserName()
 {
 	return name;
 }
 
 void
-SimulationControlManager::setData(void* data)
+MissileStatusManager::setData(void* data)
 {
 
 }
 
 bool
-SimulationControlManager::start()
+MissileStatusManager::start()
 {
 	//IniHandler iniHandler;
-	//iniHandler.readIni(_T("SimulationControlManager/SimulationControlManager.ini")); // ※주의 작업디렉터리: Main.exe가 있는 경로
+	//iniHandler.readIni(_T("MissileStatusManager/MissileStatusManager.ini")); // ※주의 작업디렉터리: Main.exe가 있는 경로
+
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << std::endl;
 	
-	simulationControlManagerHandler = std::make_shared<SimulationControlManagerHandler>(this, meb);
+	missileStatusManagerHandler = std::make_shared<MissileStatusManagerHandler>(this, meb);
 
 	return true;
 }
 
 bool
-SimulationControlManager::stop()
+MissileStatusManager::stop()
 {
 	bool result = true;
 
@@ -175,7 +167,7 @@ SimulationControlManager::stop()
 }
 
 void
-SimulationControlManager::setMEBComponent(IMEBComponent* realMEB)
+MissileStatusManager::setMEBComponent(IMEBComponent* realMEB)
 {
 	meb = realMEB;
 	mec->setMEB(meb);
@@ -187,7 +179,7 @@ SimulationControlManager::setMEBComponent(IMEBComponent* realMEB)
 extern "C" BASEMGRDLL_API
 BaseManager * createObject()
 {
-	return new SimulationControlManager;
+	return new MissileStatusManager;
 }
 
 extern "C" BASEMGRDLL_API

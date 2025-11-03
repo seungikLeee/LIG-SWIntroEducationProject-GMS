@@ -7,10 +7,10 @@
 using namespace nframework;
 using namespace nom;
 
-class SimulationControlManagerHandler {
+class MissileStatusManagerHandler {
 public:
-	SimulationControlManagerHandler(nframework::BaseManager*, nframework::IMEBComponent*);
-	~SimulationControlManagerHandler();
+	MissileStatusManagerHandler(nframework::BaseManager*, nframework::IMEBComponent*);
+	~MissileStatusManagerHandler();
 
 public:
 	void processMessage(std::shared_ptr<nframework::NOM>);
@@ -28,5 +28,5 @@ private:
 	nframework::nlinestream::NLineTstream ntcerr{ nframework::nlinestream::Level::CERR };
 
 	std::map<tstring, std::function<void(std::shared_ptr<nframework::NOM>)>> nomProcessorMap;
-	std::shared_ptr<nframework::NOM> scenario;
+	std::shared_ptr<nframework::NOM> simulationMode;
 };

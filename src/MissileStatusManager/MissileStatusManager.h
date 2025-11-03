@@ -4,18 +4,17 @@
 #include <nFramework/nom/NOMMain.h>
 #include <nFramework/nLineStream/NLineStreamMain.h>
 #include <sstream>
-#include "SimulationControlManagerHandler.h"
-//#include <nFramework/nTimer/NTimer.h>
+#include "MissileStatusManagerHandler.h"
 
 using namespace nframework;
 using namespace nom;
 using namespace nlinestream;
 
-class BASEMGRDLL_API SimulationControlManager : public BaseManager
+class BASEMGRDLL_API MissileStatusManager : public BaseManager
 {
 public:
-	SimulationControlManager(void);
-	~SimulationControlManager(void);
+	MissileStatusManager(void);
+	~MissileStatusManager(void);
 
 public:
 	// inherited from the BaseManager class
@@ -47,11 +46,10 @@ private:
 
 	std::shared_ptr<NOM> testObjNOM;
 
-	NLineTstream ntcout { Level::COUT };
-	//nframework::NTimer* nTimer;
-	//int timehandle = 0;
-	std::shared_ptr<SimulationControlManagerHandler> simulationControlManagerHandler;
+	NLineTstream ntcout{ Level::COUT };
 	
+	std::shared_ptr<MissileStatusManagerHandler> missileStatusManagerHandler;
+
 	std::unique_ptr<MECComponent> mec;
 };
 
