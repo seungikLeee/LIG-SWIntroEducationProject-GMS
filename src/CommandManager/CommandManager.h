@@ -53,7 +53,7 @@ private:
 	std::map<unsigned int, std::shared_ptr<NOM>> registeredMsg;
 	std::map<unsigned int, std::shared_ptr<NOM>> discoveredMsg;
 
-	std::shared_ptr<NOM> testObjNOM;
+	std::shared_ptr<NOM> testAirThreatNOM;
 	NTimer* nTimer;
 
 	std::vector<tstring> weapons;

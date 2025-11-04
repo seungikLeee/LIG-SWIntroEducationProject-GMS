@@ -191,22 +191,34 @@ CommandManager::start()
 		if (cmdStr == _T("register"))
 		{
 			//testObjNOM = this->registerMsg(_T("BaseEntity.PhysicalEntity.Platform.Aircraft"));
+			testAirThreatNOM = this->registerMsg(_T("AirThreatInfo"));
 		}
 		else if (cmdStr == _T("delete"))
 		{
 			//this->deleteMsg(testObjNOM);
+			this->deleteMsg(testAirThreatNOM);
 		}
 		else if (cmdStr == _T("update"))
 		{
-			/*if (testObjNOM.get())
+			if (testAirThreatNOM.get())
 			{
-				testObjNOM->setValue(_T("WorldLocation.X"), &NDouble(10.0));
-				this->updateMsg(testObjNOM);
+				// Header
+				testAirThreatNOM->setValue(_T("msgId"), &NUShort(4001));
+				testAirThreatNOM->setValue(_T("length"), &NUShort(56)); // 예시 값
+
+				// Air Threat Info
+				testAirThreatNOM->setValue(_T("airThreatId"), &NUShort(1));
+				testAirThreatNOM->setValue(_T("airThreatStatus"), &NUShort(1));  // 0: 준비, 1: 비행, 2: 폭파
+				testAirThreatNOM->setValue(_T("airThreatX"), &NDouble(50.0));
+				testAirThreatNOM->setValue(_T("airThreatY"), &NDouble(10.0));
+				testAirThreatNOM->setValue(_T("airThreatZ"), &NDouble(120.0));
+
+				this->updateMsg(testAirThreatNOM);
 			}
 			else
 			{
-				tcerr << _T("message is not registered.");
-			}*/
+				tcerr << _T("AirThreatInfo message is not registered.") << std::endl;
+			}
 		}
 		else if (cmdStr == _T("send"))
 		{

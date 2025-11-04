@@ -83,14 +83,14 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 	ntcout << "Launcher Y: " << launcherY << std::endl;
 	ntcout << "Launcher Z: " << launcherZ << std::endl;
 
-	ntcout << "Air Threat ID: " << airThreatId << std::endl;
-	ntcout << "Air Threat Init X: " << airThreatInitX << std::endl;
-	ntcout << "Air Threat Init Y: " << airThreatInitY << std::endl;
-	ntcout << "Air Threat Init Z: " << airThreatInitZ << std::endl;
-	ntcout << "Air Threat Speed: " << airThreatSpeed << std::endl;
-	ntcout << "Air Threat Dir X: " << airThreatDirectionX << std::endl;
-	ntcout << "Air Threat Dir Y: " << airThreatDirectionY << std::endl;
-	ntcout << "Air Threat Dir Z: " << airThreatDirectionZ << std::endl;
+	ntcout << "AirThreat ID: " << airThreatId << std::endl;
+	ntcout << "AirThreat Init X: " << airThreatInitX << std::endl;
+	ntcout << "AirThreat Init Y: " << airThreatInitY << std::endl;
+	ntcout << "AirThreat Init Z: " << airThreatInitZ << std::endl;
+	ntcout << "AirThreat Speed: " << airThreatSpeed << std::endl;
+	ntcout << "AirThreat Dir X: " << airThreatDirectionX << std::endl;
+	ntcout << "AirThreat Dir Y: " << airThreatDirectionY << std::endl;
+	ntcout << "AirThreat Dir Z: " << airThreatDirectionZ << std::endl;
 	//STEP1: 시나리오 저장
 	scenario = _scenario;
 

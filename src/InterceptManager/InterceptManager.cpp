@@ -72,7 +72,8 @@ InterceptManager::discoverMsg(std::shared_ptr<NOM> nomMsg)
 	
 	
 	discoveredMsgMap.emplace(nomMsg->getInstanceID(), nomMsg);
-
+	
+	interceptManagerHandler->processMessage(nomMsg);
 }
 
 void
@@ -86,7 +87,7 @@ InterceptManager::reflectMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
 	
-	
+	interceptManagerHandler->processMessage(nomMsg);
 }
 
 void
@@ -122,8 +123,8 @@ void
 InterceptManager::recvMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
-	interceptManagerHandler->processMessage(nomMsg);
 	
+	interceptManagerHandler->processMessage(nomMsg);
 }
 
 

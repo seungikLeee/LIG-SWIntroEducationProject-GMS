@@ -98,6 +98,11 @@ void MissileStatusManagerHandler::processLaunchMissile(std::shared_ptr<nframewor
 	timerHandle = nTimer->addPeriodicTask(1000, periodicFunc);
 }
 
+/*
+* 시뮬레이션을 종료하고, 유도탄 객체 모의 중지하는 함수
+* 매개변수: task NOM 메세지 (필요 없음)
+* 반환값:void
+*/
 void MissileStatusManagerHandler::processLaunchedMissileStop(std::shared_ptr<nframework::NOM> task)
 {
 	//STEP1: 유도탄 객체 모의 중지
