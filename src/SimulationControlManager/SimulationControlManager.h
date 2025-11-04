@@ -48,8 +48,7 @@ private:
 	std::shared_ptr<NOM> testObjNOM;
 
 	NLineTstream ntcout { Level::COUT };
-	//nframework::NTimer* nTimer;
-	//int timehandle = 0;
+
 	std::shared_ptr<SimulationControlManagerHandler> simulationControlManagerHandler;
 	
 	std::unique_ptr<MECComponent> mec;

@@ -18,6 +18,9 @@ SimulationControlManagerHandler::~SimulationControlManagerHandler()
 ************************************************************************/
 void SimulationControlManagerHandler::initialize()
 {
+	scenarioDeployStatus = false;
+	simulationStatus = false;
+
 	std::function<void(std::shared_ptr<nframework::NOM>)> nomMsgProc;
 	
 	nomMsgProc = std::bind(&SimulationControlManagerHandler::processSetSimulationMode, this, std::placeholders::_1);
@@ -25,6 +28,9 @@ void SimulationControlManagerHandler::initialize()
 	
 	nomMsgProc = std::bind(&SimulationControlManagerHandler::processSendGMSCommand, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("SendGMSCommand"), nomMsgProc));
+
+	nomMsgProc = std::bind(&SimulationControlManagerHandler::processSetScenarioDeployStatus, this, std::placeholders::_1);
+	nomProcessorMap.insert(std::make_pair(_T("ScenarioDeployStatus"), nomMsgProc));
 }
 
 void SimulationControlManagerHandler::release()
@@ -59,6 +65,11 @@ void SimulationControlManagerHandler::processSetSimulationMode(std::shared_ptr<n
 	//ntcout << "length: " << length << std::endl;
 	//ntcout << "mode: " << mode << std::endl;
 
+	if (scenarioDeployStatus != true) { // 현재 시나리오 배포 여부 판단
+		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "scenario is not deployed." << std::endl;
+		return;
+	}
+
 	std::shared_ptr<NOM> simulationModeNOM = meb->getNOMInstance(userMgr->getUserName(), _T("SimulationMode"));
 	
 	// Header
@@ -68,6 +79,15 @@ void SimulationControlManagerHandler::processSetSimulationMode(std::shared_ptr<n
 	// Body
 	simulationModeNOM->setValue(_T("mode"), _simulationMode->getValue(_T("mode")));
 
+	if (simulationModeNOM->getValue(_T("mode"))->toChar() == '1') { // 값 체크 필요
+		ntcout << "Set SimulationStatus to true in SimulationControlManager!" << std::endl;
+		simulationStatus = true;
+	}
+	else {
+		ntcout << "Set SimulationStatus to false in SimulationControlManager!" << std::endl;
+		simulationStatus = false;
+	}
+	
 	userMgr->sendMsg(simulationModeNOM);
 }
 
@@ -81,6 +101,10 @@ void SimulationControlManagerHandler::processSendGMSCommand(std::shared_ptr<nfra
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _sendGMSCommand->getName() << std::endl;
 	ntcout << "Receive SendGMSCommand Info in SimulationControlManager!" << std::endl;
 
+	if (simulationStatus != true) { // 모의 진행 여부 판단 
+		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "simulation is not started." << std::endl;
+		return;
+	}
 	//auto msgId = _sendGMSCommand->getValue(_T("msgId"))->toUShort();
 	//auto length = _sendGMSCommand->getValue(_T("length"))->toUShort();
 	//auto fire = _sendGMSCommand->getValue(_T("fire"))->toChar();
@@ -99,4 +123,23 @@ void SimulationControlManagerHandler::processSendGMSCommand(std::shared_ptr<nfra
 	launchMissileNOM->setValue(_T("fire"), _sendGMSCommand->getValue(_T("fire")));
 
 	userMgr->sendMsg(launchMissileNOM);
+}
+
+/*
+* 시나리오 로드 여부를 수신하고, 해당 정보를 저장하는 함수
+* 매개변수: 시뮬레이션 모드 NOM 메세지
+* 반환값:void
+*/
+void SimulationControlManagerHandler::processSetScenarioDeployStatus(std::shared_ptr<nframework::NOM> _scenarioDeployStatus)
+{
+	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _scenarioDeployStatus->getName() << std::endl;
+	ntcout << "Receive ScenarioDeployStatus in SimulationControlManager!" << std::endl;
+	
+	if (_scenarioDeployStatus->getValue(_T("status"))-> toChar() != '1') { // 모의 진행 여부 판단 
+		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "scenario is not deployed in SimulationControlManagerHandler!" << std::endl;
+		return;
+	}
+	//시나리오 배포 여부 변경
+	scenarioDeployStatus = true;
+	ntcout << "Update ScenarioDeployStatus to true in SimulationControlManager!" << std::endl;
 }

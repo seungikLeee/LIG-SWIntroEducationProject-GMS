@@ -3,6 +3,7 @@
 #include <nFramework/nom/NOMMain.h>
 #include <nFramework/mec/MECComponent.h>
 #include <nFramework/nLineStream/NLineTstream.h>
+#include <nFramework/nTimer/NTimer.h>
 
 using namespace nframework;
 using namespace nom;
@@ -16,10 +17,12 @@ public:
 	void processMessage(std::shared_ptr<nframework::NOM>);
 	void processSetSimulationMode(std::shared_ptr<nframework::NOM>);
 	void processLaunchMissile(std::shared_ptr<nframework::NOM>);
+	void processLaunchedMissileStop(std::shared_ptr<nframework::NOM>);
 
 private:
 	void initialize();
 	void release();
+	void sendMissileCallback();
 
 private:
 	nframework::BaseManager* userMgr;
@@ -29,5 +32,10 @@ private:
 	nframework::nlinestream::NLineTstream ntcerr{ nframework::nlinestream::Level::CERR };
 
 	std::map<tstring, std::function<void(std::shared_ptr<nframework::NOM>)>> nomProcessorMap;
+	
 	std::shared_ptr<nframework::NOM> simulationMode;
+	std::shared_ptr<nframework::NOM> missileStatusNOM;
+
+	nframework::NTimer* nTimer;
+	int timerHandle;
 };

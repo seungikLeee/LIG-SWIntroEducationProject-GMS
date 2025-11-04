@@ -97,5 +97,16 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 	//STEP2: 발사대 초기 위치 정보만 추출
 	//To do
 	
-	//userMgr->sendMsg(reqAirThreatInitNOM);
+	//STEP3: 시나리오 배포 상태 송신
+	std::shared_ptr<NOM> scenarioDeployStatusNOM = meb->getNOMInstance(userMgr->getUserName(), _T("ScenarioDeployStatus"));
+
+	// Header
+	scenarioDeployStatusNOM->setValue(_T("msgId"), &NUShort(1002));
+	scenarioDeployStatusNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
+
+	// Body
+	scenarioDeployStatusNOM->setValue(_T("status"), &NCharacter('1')); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+
+	ntcout << _T("Send Scenario Deploy Status in ScenarioManager!") << std::endl;
+	userMgr->sendMsg(scenarioDeployStatusNOM);
 }
