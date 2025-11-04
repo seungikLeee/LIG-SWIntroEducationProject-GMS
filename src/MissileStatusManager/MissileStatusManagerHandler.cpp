@@ -20,6 +20,9 @@ void MissileStatusManagerHandler::initialize()
 {
 	std::function<void(std::shared_ptr<nframework::NOM>)> nomMsgProc;
 	
+	nomMsgProc = std::bind(&MissileStatusManagerHandler::processSetScenarioDeployStatus, this, std::placeholders::_1);
+	nomProcessorMap.insert(std::make_pair(_T("ScenarioDeployStatus"), nomMsgProc));
+
 	nomMsgProc = std::bind(&MissileStatusManagerHandler::processSetSimulationMode, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("SimulationMode"), nomMsgProc));
 	
@@ -29,6 +32,9 @@ void MissileStatusManagerHandler::initialize()
 	nomMsgProc = bind(&MissileStatusManagerHandler::processLaunchedMissileStop, this, std::placeholders::_1);
 	nomProcessorMap.insert(make_pair(_T("LaunchedMissileStop"), nomMsgProc));
 
+	nomMsgProc = bind(&MissileStatusManagerHandler::processLauncherPosition, this, std::placeholders::_1);
+	nomProcessorMap.insert(make_pair(_T("LauncherPosition"), nomMsgProc));
+	
 	nTimer = &(nframework::NTimer::getInstance());
 	timerHandle = 0;
 }
@@ -47,6 +53,27 @@ void MissileStatusManagerHandler::processMessage(std::shared_ptr<nframework::NOM
 /************************************************************************
 	Busniess Logic
 ************************************************************************/
+
+/*
+* 시나리오 로드 여부를 수신하고, 해당 정보를 저장하는 함수
+* 매개변수: 시뮬레이션 모드 NOM 메세지
+* 반환값:void
+*/
+void MissileStatusManagerHandler::processSetScenarioDeployStatus(std::shared_ptr<nframework::NOM> _scenarioDeployStatus)
+{
+	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _scenarioDeployStatus->getName() << std::endl;
+	ntcout << "Receive ScenarioDeployStatus in SimulationControlManager!" << std::endl;
+
+	if (_scenarioDeployStatus->getValue(_T("status"))->toChar() != '1') { // 모의 진행 여부 판단 
+		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "scenario is not deployed in SimulationControlManagerHandler!" << std::endl;
+		return;
+	}
+
+	launcherPosition = meb->getNOMInstance(userMgr->getUserName(), _T("LauncherPosition"));
+
+	ntcout << "Update ScenarioDeployStatus to true in SimulationControlManager!" << std::endl;
+}
+
 /*
 * 시뮬레이션 모드를 갱신하는 함수
 * 매개변수: 시뮬레이션 모드 NOM 메세지
@@ -109,6 +136,20 @@ void MissileStatusManagerHandler::processLaunchedMissileStop(std::shared_ptr<nfr
 	nTimer->removeTask(timerHandle);
 }
 
+/*
+* 시나리오 배포 후, 발사대 초기 위치 설정하는 함수
+* 매개변수: task NOM 메세지 (필요 없음)
+* 반환값:void
+*/
+void MissileStatusManagerHandler::processLauncherPosition(std::shared_ptr<nframework::NOM> _launcherPosition)
+{
+	launcherPosition->setValue(_T("msgId"), _launcherPosition->getValue(_T("msgId")));
+	launcherPosition->setValue(_T("length"), _launcherPosition->getValue(_T("length")));
+	launcherPosition->setValue(_T("launcherX"), _launcherPosition->getValue(_T("launcherX")));
+	launcherPosition->setValue(_T("launcherY"), _launcherPosition->getValue(_T("launcherY")));
+	launcherPosition->setValue(_T("launcherZ"), _launcherPosition->getValue(_T("launcherZ")));
+}
+
 
 /*
 * 유도탄 리스트의 실시간 정보를 계산하고 송신하는 함수(단일)
@@ -127,9 +168,9 @@ void MissileStatusManagerHandler::sendMissileCallback()
 
 	// Body
 	missileStatusNOM->setValue(_T("missileId"), &NUShort(1));          // 유도탄 ID
-	missileStatusNOM->setValue(_T("missileX"), &NDouble(1000.0));     // X 좌표
-	missileStatusNOM->setValue(_T("missileY"), &NDouble(500.0));      // Y 좌표
-	missileStatusNOM->setValue(_T("missileZ"), &NDouble(50.0));       // Z 좌표
+	missileStatusNOM->setValue(_T("missileX"), launcherPosition->getValue(_T("launcherX")));     // X 좌표
+	missileStatusNOM->setValue(_T("missileY"), launcherPosition->getValue(_T("launcherY")));      // Y 좌표
+	missileStatusNOM->setValue(_T("missileZ"), launcherPosition->getValue(_T("launcherZ")));       // Z 좌표
 	missileStatusNOM->setValue(_T("missileStatus"), &NCharacter(1));  // 상태: 0=준비, 1=비행, 2=폭파
 
 	ntcout << _T("Send MissileStatus Update in MissileStatusManager!") << std::endl;

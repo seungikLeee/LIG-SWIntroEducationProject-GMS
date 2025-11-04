@@ -177,23 +177,3 @@ void InterceptManagerHandler::processMissileStatus(std::shared_ptr<nframework::N
 	ntcout << "missileStatus: " << missileStatus << std::endl;
 	//거리 계산 함수 따로 구현
 }
-
-void InterceptManagerHandler::calculateDistanceBetweenObjects()
-{
-	if (!airThreatInfo || !missileInfo)
-		return;
-
-	double AT_x = airThreatInfo->getValue(_T("airThreatX"))->toDouble();
-	double AT_y = airThreatInfo->getValue(_T("airThreatY"))->toDouble();
-	double AT_z = airThreatInfo->getValue(_T("airThreatZ"))->toDouble();
-
-	double GM_x = missileInfo->getValue(_T("missileX"))->toDouble();
-	double GM_y = missileInfo->getValue(_T("missileY"))->toDouble();
-	double GM_z = missileInfo->getValue(_T("missileZ"))->toDouble();
-
-	double dx = AT_x - GM_x;
-	double dy = AT_y - GM_y;
-	double dz = AT_z - GM_z;
-
-	distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-}

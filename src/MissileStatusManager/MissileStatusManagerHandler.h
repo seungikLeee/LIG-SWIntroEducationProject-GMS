@@ -18,6 +18,8 @@ public:
 	void processSetSimulationMode(std::shared_ptr<nframework::NOM>);
 	void processLaunchMissile(std::shared_ptr<nframework::NOM>);
 	void processLaunchedMissileStop(std::shared_ptr<nframework::NOM>);
+	void processLauncherPosition(std::shared_ptr<nframework::NOM>);
+	void processSetScenarioDeployStatus(std::shared_ptr<nframework::NOM>);
 
 private:
 	void initialize();
@@ -35,6 +37,7 @@ private:
 	
 	std::shared_ptr<nframework::NOM> simulationMode;
 	std::shared_ptr<nframework::NOM> missileStatusNOM;
+	std::shared_ptr<nframework::NOM> launcherPosition;
 
 	nframework::NTimer* nTimer;
 	int timerHandle;
