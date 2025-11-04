@@ -65,6 +65,10 @@ void MissileStatusManagerHandler::processSetSimulationMode(std::shared_ptr<nfram
 	ntcout << "length: " << length << std::endl;
 	ntcout << "mode: " << mode << std::endl;
 	
+	if (_simulationMode->getValue(_T("mode"))->toChar() == '0') { // 값 체크 필요
+		ntcout << "Remove LaunchedMissile Update in MissileStatusManagerHandler!" << std::endl;
+		processLaunchedMissileStop(_simulationMode); // Todo: 인자 값 필요 없음, 수정 필요
+	}
 	simulationMode = _simulationMode;
 }
 
@@ -96,7 +100,7 @@ void MissileStatusManagerHandler::processLaunchMissile(std::shared_ptr<nframewor
 
 void MissileStatusManagerHandler::processLaunchedMissileStop(std::shared_ptr<nframework::NOM> task)
 {
-	//STEP1: 공중위협 객체 모의 중지
+	//STEP1: 유도탄 객체 모의 중지
 	nTimer->removeTask(timerHandle);
 }
 

@@ -43,6 +43,7 @@ private:
 	void testSend();
 	void testSendArgs(wchar_t*);
 	void testStart();
+	void testEnd();
 	void testLaunch();
 
 private:
