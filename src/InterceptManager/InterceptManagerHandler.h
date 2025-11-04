@@ -23,6 +23,8 @@ public:
 private:
 	void initialize();
 	void release();
+	//double calculateDistanceBetweenObjects();
+	//void moveMissileTowardTarget(double);
 
 private:
 	nframework::BaseManager* userMgr;

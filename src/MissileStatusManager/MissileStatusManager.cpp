@@ -72,7 +72,7 @@ MissileStatusManager::discoverMsg(std::shared_ptr<NOM> nomMsg)
 	
 	
 	discoveredMsgMap.emplace(nomMsg->getInstanceID(), nomMsg);
-
+	missileStatusManagerHandler->processMessage(nomMsg);
 }
 
 void
@@ -85,7 +85,7 @@ void
 MissileStatusManager::reflectMsg(std::shared_ptr<NOM> nomMsg)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << nomMsg->getName() << std::endl;
-	
+	missileStatusManagerHandler->processMessage(nomMsg);
 	
 }
 

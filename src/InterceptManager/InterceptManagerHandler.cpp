@@ -31,10 +31,10 @@ void InterceptManagerHandler::initialize()
 	nomMsgProc = std::bind(&InterceptManagerHandler::processAirThreatInfo, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("AirThreatInfo"), nomMsgProc));
 
-	nomMsgProc = std::bind(&InterceptManagerHandler::processMissileStatus, this, std::placeholders::_1);
-	nomProcessorMap.insert(std::make_pair(_T("MissileStatus"), nomMsgProc));
-	//nTimer = &(nframework::NTimer::getInstance());
-	//timerHandle = 0;
+	/*nomMsgProc = std::bind(&InterceptManagerHandler::processMissileStatus, this, std::placeholders::_1);
+	nomProcessorMap.insert(std::make_pair(_T("MissileStatus"), nomMsgProc));*/
+	/*nTimer = &(nframework::NTimer::getInstance());
+	timerHandle = 0;*/
 
 	airThreatInfo = meb->getNOMInstance(userMgr->getUserName(), _T("AirThreatInfo"));
 	missileInfo = meb->getNOMInstance(userMgr->getUserName(), _T("MissileStatus"));
@@ -166,7 +166,7 @@ void InterceptManagerHandler::processMissileStatus(std::shared_ptr<nframework::N
 	auto missileX = missileInfo->getValue(_T("missileX"))->toDouble();
 	auto missileY = missileInfo->getValue(_T("missileY"))->toDouble();
 	auto missileZ = missileInfo->getValue(_T("missileZ"))->toDouble();
-	auto missileStatus = missileInfo->getValue(_T("missileStatus"))->toUShort();
+	auto missileStatus = missileInfo->getValue(_T("missileStatus"))->toChar();
 
 	ntcout << "msgId: " << msgId << std::endl;
 	ntcout << "length: " << length << std::endl;
@@ -176,4 +176,96 @@ void InterceptManagerHandler::processMissileStatus(std::shared_ptr<nframework::N
 	ntcout << "missileZ: " << missileZ << std::endl;
 	ntcout << "missileStatus: " << missileStatus << std::endl;
 	//거리 계산 함수 따로 구현
+	//moveMissileTowardTarget(1);
 }
+
+
+//double InterceptManagerHandler::calculateDistanceBetweenObjects()
+//{
+//	if (!airThreatInfo || !missileInfo)
+//		return -1.0;
+//
+//	double AT_x = airThreatInfo->getValue(_T("airThreatX"))->toDouble();
+//	double AT_y = airThreatInfo->getValue(_T("airThreatY"))->toDouble();
+//	double AT_z = airThreatInfo->getValue(_T("airThreatZ"))->toDouble();
+//
+//	double GM_x = missileInfo->getValue(_T("missileX"))->toDouble();
+//	double GM_y = missileInfo->getValue(_T("missileY"))->toDouble();
+//	double GM_z = missileInfo->getValue(_T("missileZ"))->toDouble();
+//
+//	double dx = AT_x - GM_x;
+//	double dy = AT_y - GM_y;
+//	double dz = AT_z - GM_z;
+//
+//	return std::sqrt(dx * dx + dy * dy + dz * dz);
+//}
+
+//void InterceptManagerHandler::moveMissileTowardTarget(double missileSpeed)
+//{
+//	if (!airThreatInfo || !missileInfo)
+//		return;
+//
+//	// 현재 좌표
+//	double AT_x = airThreatInfo->getValue(_T("airThreatX"))->toDouble();
+//	double AT_y = airThreatInfo->getValue(_T("airThreatY"))->toDouble();
+//	double AT_z = airThreatInfo->getValue(_T("airThreatZ"))->toDouble();
+//
+//	double GM_x = missileInfo->getValue(_T("missileX"))->toDouble();
+//	double GM_y = missileInfo->getValue(_T("missileY"))->toDouble();
+//	double GM_z = missileInfo->getValue(_T("missileZ"))->toDouble();
+//
+//	double dx = AT_x - GM_x;
+//	double dy = AT_y - GM_y;
+//	double dz = AT_z - GM_z;
+//
+//	double dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+//	if (dist < 0.01) return; // 이미 도착
+//
+//	// 단위 벡터
+//	double ux = dx / dist;
+//	double uy = dy / dist;
+//	double uz = dz / dist;
+//
+//	// 이동 거리 = min(속도, 남은 거리)
+//	double moveDist = missileSpeed;
+//	moveDist = moveDist * 0.1; // 주기에 따라 변환
+//	GM_x += ux * moveDist;
+//	GM_y += uy * moveDist;
+//	GM_z += uz * moveDist;
+//
+//	// NOM 갱신
+//	/*missileInfo->setValue(_T("missileX"), &NDouble(GM_x));
+//	missileInfo->setValue(_T("missileY"), &NDouble(GM_y));
+//	missileInfo->setValue(_T("missileZ"), &NDouble(GM_z));*/
+//
+//	ntcout << "missileX: " << missileInfo->getValue(_T("missileX"))->toDouble() << std::endl;
+//	ntcout << "missileY: " << missileInfo->getValue(_T("missileY"))->toDouble() << std::endl;
+//	ntcout << "missileZ: " << missileInfo->getValue(_T("missileZ"))->toDouble() << std::endl;
+//	ntcout << "missileStatus: " << missileInfo->getValue(_T("missileStatus"))->toChar() << std::endl;
+//
+//	std::shared_ptr<NOM> updateMissileInfoNOM = meb->getNOMInstance(userMgr->getUserName(), _T("UpdateMissileInfo"));
+//
+//	//Header
+//	updateMissileInfoNOM->setValue(_T("msgId"), &NUShort(3305));
+//	updateMissileInfoNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
+//
+//	//Body
+//	updateMissileInfoNOM->setValue(_T("missileX"), missileInfo->getValue(_T("missileX")));
+//	updateMissileInfoNOM->setValue(_T("missileY"), missileInfo->getValue(_T("missileY")));
+//	updateMissileInfoNOM->setValue(_T("missileZ"), missileInfo->getValue(_T("missileZ")));
+//
+//	userMgr->sendMsg(updateMissileInfoNOM);
+//}
+
+//bool InterceptManagerHandler::checkInterceptCondition(double threshold)
+//{
+//	double distance = calculateDistanceBetweenObjects();
+//	if (distance < 0) return false;
+//
+//	if (distance <= threshold)
+//	{
+//		ntcout << "Intercept Successful! Distance: " << distance << std::endl;
+//		return true;
+//	}
+//	return false;
+//}
