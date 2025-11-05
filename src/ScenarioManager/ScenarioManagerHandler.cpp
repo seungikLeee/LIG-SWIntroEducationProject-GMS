@@ -96,6 +96,7 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 	ntcout << "AirThreat Dir X: " << airThreatDirectionX << std::endl;
 	ntcout << "AirThreat Dir Y: " << airThreatDirectionY << std::endl;
 	ntcout << "AirThreat Dir Z: " << airThreatDirectionZ << std::endl;
+
 	//STEP1: 시나리오 저장
 	scenario = _scenario;
 
@@ -107,7 +108,7 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 	scenarioDeployStatusNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
 
 	// Body
-	scenarioDeployStatusNOM->setValue(_T("status"), &NCharacter('1')); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+	scenarioDeployStatusNOM->setValue(_T("status"), &NCharacter('1')); // 1 = 시나리오 배포 성공, 0 = 시나리오 배포 전 의 의미로 사용 가능
 
 	ntcout << _T("Send Scenario Deploy Status in ScenarioManager!") << std::endl;
 	userMgr->sendMsg(scenarioDeployStatusNOM);

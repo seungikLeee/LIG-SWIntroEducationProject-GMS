@@ -156,8 +156,6 @@ CommandManager::start()
 	iniHandler.readIni(_T("CommandManager/CommandManager.ini")); // ※주의 작업디렉터리: Main.exe가 있는 경로
 
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << std::endl;
-	
-	
 
 	unsigned int numOfSimulators = iniHandler.readInteger(_T("Simulators"), _T("Count"));
 
@@ -190,7 +188,6 @@ CommandManager::start()
 
 		if (cmdStr == _T("register"))
 		{
-			//testObjNOM = this->registerMsg(_T("BaseEntity.PhysicalEntity.Platform.Aircraft"));
 			testAirThreatNOM = this->registerMsg(_T("AirThreatInfo"));
 		}
 		else if (cmdStr == _T("delete"))
@@ -294,7 +291,6 @@ CommandManager::setMEBComponent(IMEBComponent* realMEB)
 void
 CommandManager::testSend()
 {
-	//std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
 	std::shared_ptr<NOM> setScenarioNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
 	//auto setScenarioNOM = meb->getNOMInstance(getUserName(), _T("SetScenario"));
 
@@ -323,42 +319,30 @@ CommandManager::testSend()
 	setScenarioNOM->setValue(_T("airThreatDirectionY"), &NDouble(0.0));
 	setScenarioNOM->setValue(_T("airThreatDirectionZ"), &NDouble(0.0));
 
-	/*std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("EventReport"));
-	NUShort id = 7;
-	testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
-	NEnum evtType = 101;
-	testIntrNOM->setValue(_T("EventType"), &evtType);*/
-
-	//shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("SetData"));
-	//NUShort id = 7;
-	//testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
-	//NUInteger requestIdentifier = 101;
-	//testIntrNOM->setValue(_T("RequestIdentifier"), &requestIdentifier);
-
 	ntcout << _T("Send Scenario Info in CommandManager!") << std::endl;
 	this->sendMsg(setScenarioNOM);
 }
 
-void
-CommandManager::testSendArgs(wchar_t* arg)
-{
-	ntcout << arg << std::endl;
-	
-	
-	std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("EventReport"));
-	NUShort id = 7;
-	testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
-	NEnum evtType = 101;
-	testIntrNOM->setValue(_T("EventType"), &evtType);
-
-	//shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("SetData"));
-	//NUShort id = 7;
-	//testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
-	//NUInteger requestIdentifier = 101;
-	//testIntrNOM->setValue(_T("RequestIdentifier"), &requestIdentifier);
-
-	this->sendMsg(testIntrNOM);
-}
+//void
+//CommandManager::testSendArgs(wchar_t* arg)
+//{
+//	ntcout << arg << std::endl;
+//	
+//	
+//	std::shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("EventReport"));
+//	NUShort id = 7;
+//	testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
+//	NEnum evtType = 101;
+//	testIntrNOM->setValue(_T("EventType"), &evtType);
+//
+//	//shared_ptr<NOM> testIntrNOM = meb->getNOMInstance(getUserName(), _T("SetData"));
+//	//NUShort id = 7;
+//	//testIntrNOM->setValue(_T("OriginatingEntity.FederateIdentifier.SiteID"), &id);
+//	//NUInteger requestIdentifier = 101;
+//	//testIntrNOM->setValue(_T("RequestIdentifier"), &requestIdentifier);
+//
+//	this->sendMsg(testIntrNOM);
+//}
 
 void CommandManager::testStart()
 {
@@ -369,7 +353,7 @@ void CommandManager::testStart()
 	setSimModeNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
 
 	// Body
-	setSimModeNOM->setValue(_T("mode"), &NCharacter('1')); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+	setSimModeNOM->setValue(_T("mode"), &NCharacter('1')); // 1 = 모의 시작, 0 = 모의 종료의 의미로 사용 가능
 
 	ntcout << _T("Send Simulation Start in CommandManager!") << std::endl;
 	this->sendMsg(setSimModeNOM);
@@ -385,7 +369,7 @@ void CommandManager::testEnd()
 	setSimModeNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
 
 	// Body
-	setSimModeNOM->setValue(_T("mode"), &NCharacter('0')); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+	setSimModeNOM->setValue(_T("mode"), &NCharacter('0')); // 1 = 모의 시작, 0 = 모의 종료의 의미로 사용 가능
 
 	ntcout << _T("Send Simulation End in CommandManager!") << std::endl;
 	this->sendMsg(setSimModeNOM);
@@ -400,7 +384,7 @@ void CommandManager::testLaunch()
 	setSendGMSNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
 
 	// Body
-	setSendGMSNOM->setValue(_T("fire"), &NCharacter('1')); // 1 = 시작, 0 = 종료 등의 의미로 사용 가능
+	setSendGMSNOM->setValue(_T("fire"), &NCharacter('1')); // 1 = 유도탄 발사 
 
 	ntcout << _T("Send Launch Command in CommandManager!") << std::endl;
 	this->sendMsg(setSendGMSNOM);

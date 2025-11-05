@@ -29,8 +29,10 @@ void SimulationControlManagerHandler::initialize()
 	nomMsgProc = std::bind(&SimulationControlManagerHandler::processSendGMSCommand, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("SendGMSCommand"), nomMsgProc));
 
+	//내부 메시지
 	nomMsgProc = std::bind(&SimulationControlManagerHandler::processSetScenarioDeployStatus, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("ScenarioDeployStatus"), nomMsgProc));
+
 }
 
 void SimulationControlManagerHandler::release()
@@ -97,13 +99,6 @@ void SimulationControlManagerHandler::processSendGMSCommand(std::shared_ptr<nfra
 		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "simulation is not started." << std::endl;
 		return;
 	}
-	//auto msgId = _sendGMSCommand->getValue(_T("msgId"))->toUShort();
-	//auto length = _sendGMSCommand->getValue(_T("length"))->toUShort();
-	//auto fire = _sendGMSCommand->getValue(_T("fire"))->toChar();
-
-	//ntcout << "msgId: " << msgId << std::endl;
-	//ntcout << "length: " << length << std::endl;
-	//ntcout << "fire: " << fire << std::endl;
 
 	std::shared_ptr<NOM> launchMissileNOM = meb->getNOMInstance(userMgr->getUserName(), _T("LaunchMissile"));
 
