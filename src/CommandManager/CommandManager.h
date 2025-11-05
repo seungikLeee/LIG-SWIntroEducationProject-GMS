@@ -45,6 +45,7 @@ private:
 	void testStart();
 	void testEnd();
 	void testLaunch();
+	void testDetonate();
 
 private:
 	IMEBComponent* meb;

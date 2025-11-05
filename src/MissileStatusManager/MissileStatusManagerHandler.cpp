@@ -19,29 +19,24 @@ MissileStatusManagerHandler::~MissileStatusManagerHandler()
 void MissileStatusManagerHandler::initialize()
 {
 	std::function<void(std::shared_ptr<nframework::NOM>)> nomMsgProc;
-	
-	nomMsgProc = std::bind(&MissileStatusManagerHandler::processSetScenarioDeployStatus, this, std::placeholders::_1);
-	nomProcessorMap.insert(std::make_pair(_T("ScenarioDeployStatus"), nomMsgProc));
 
-	nomMsgProc = std::bind(&MissileStatusManagerHandler::processSetSimulationMode, this, std::placeholders::_1);
+	nomMsgProc = std::bind(&MissileStatusManagerHandler::processSimulationMode, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("SimulationMode"), nomMsgProc));
-	
-	nomMsgProc = std::bind(&MissileStatusManagerHandler::processLaunchMissile, this, std::placeholders::_1);
-	nomProcessorMap.insert(std::make_pair(_T("LaunchMissile"), nomMsgProc));
-
-	nomMsgProc = std::bind(&MissileStatusManagerHandler::processLaunchedMissileStop, this);
-	nomProcessorMap.insert(make_pair(_T("LaunchedMissileStop"), nomMsgProc));
-
-	nomMsgProc = std::bind(&MissileStatusManagerHandler::processLauncherPosition, this, std::placeholders::_1);
-	nomProcessorMap.insert(make_pair(_T("LauncherPosition"), nomMsgProc));
-
-	/*nomMsgProc = bind(&MissileStatusManagerHandler::processUpdateMissileInfo, this, std::placeholders::_1);
-	nomProcessorMap.insert(make_pair(_T("UpdateMissileInfo"), nomMsgProc));*/
 	
 	nomMsgProc = std::bind(&MissileStatusManagerHandler::processAirThreatInfo, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("AirThreatInfo"), nomMsgProc));
 
+	nomMsgProc = std::bind(&MissileStatusManagerHandler::processLauncherPosition, this, std::placeholders::_1);
+	nomProcessorMap.insert(make_pair(_T("LauncherPosition"), nomMsgProc));
+
+	nomMsgProc = std::bind(&MissileStatusManagerHandler::processLaunchMissile, this, std::placeholders::_1);
+	nomProcessorMap.insert(std::make_pair(_T("LaunchMissile"), nomMsgProc));
+
+	nomMsgProc = std::bind(&MissileStatusManagerHandler::processInterceptFail, this);
+	nomProcessorMap.insert(make_pair(_T("LaunchedMissileStop"), nomMsgProc));
+
 	airThreatInfo = meb->getNOMInstance(userMgr->getUserName(), _T("AirThreatInfo"));
+	launcherPosition = meb->getNOMInstance(userMgr->getUserName(), _T("LauncherPosition"));
 
 	nTimer = &(nframework::NTimer::getInstance());
 	timerHandle = 0;
@@ -63,31 +58,11 @@ void MissileStatusManagerHandler::processMessage(std::shared_ptr<nframework::NOM
 ************************************************************************/
 
 /*
-* 시나리오 로드 여부를 수신하고, 해당 정보를 저장하는 함수
+* 시뮬레이션 모드를 갱신하는 함수, 모의 종료 명령일 때, 유도탄 비행 모의를 진행 중이라면 비행 모의 종료
 * 매개변수: 시뮬레이션 모드 NOM 메세지
 * 반환값:void
 */
-void MissileStatusManagerHandler::processSetScenarioDeployStatus(std::shared_ptr<nframework::NOM> _scenarioDeployStatus)
-{
-	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _scenarioDeployStatus->getName() << std::endl;
-	ntcout << "Receive ScenarioDeployStatus in MissileStatusManagerHandler!" << std::endl;
-
-	if (_scenarioDeployStatus->getValue(_T("status"))->toChar() != '1') { // 모의 진행 여부 판단 
-		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "scenario is not deployed in MissileStatusManagerHandler!" << std::endl;
-		return;
-	}
-
-	launcherPosition = meb->getNOMInstance(userMgr->getUserName(), _T("LauncherPosition"));
-
-	ntcout << "Update ScenarioDeployStatus to true in MissileStatusManagerHandler!" << std::endl;
-}
-
-/*
-* 시뮬레이션 모드를 갱신하는 함수
-* 매개변수: 시뮬레이션 모드 NOM 메세지
-* 반환값:void
-*/
-void MissileStatusManagerHandler::processSetSimulationMode(std::shared_ptr<nframework::NOM> _simulationMode)
+void MissileStatusManagerHandler::processSimulationMode(std::shared_ptr<nframework::NOM> _simulationMode)
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _simulationMode->getName() << std::endl;
 	ntcout << "Receive SimulationMode Info in MissileStatusManager!" << std::endl;
@@ -95,16 +70,13 @@ void MissileStatusManagerHandler::processSetSimulationMode(std::shared_ptr<nfram
 	auto msgId = _simulationMode->getValue(_T("msgId"))->toUShort();
 	auto length = _simulationMode->getValue(_T("length"))->toUShort();
 	auto mode = _simulationMode->getValue(_T("mode"))->toChar();
-
-	ntcout << "msgId: " << msgId << std::endl;
-	ntcout << "length: " << length << std::endl;
-	ntcout << "mode: " << mode << std::endl;
 	
+	simulationMode = _simulationMode;
+
 	if (_simulationMode->getValue(_T("mode"))->toChar() == '0') { // 값 체크 필요
 		ntcout << "Remove LaunchedMissile Update in MissileStatusManagerHandler!" << std::endl;
-		processLaunchedMissileStop();
+		processInterceptFail();
 	}
-	simulationMode = _simulationMode;
 }
 
 /*
@@ -144,20 +116,52 @@ void MissileStatusManagerHandler::processLaunchMissile(std::shared_ptr<nframewor
 }
 
 /*
-* 시뮬레이션을 종료하고, 유도탄 객체 모의 중지하는 함수
-* 매개변수: task NOM 메세지 (필요 없음)
-* 반환값:void
+* 요격 성공 시, 후 처리 함수
+* 매개변수: void
+* 반환값: void
 */
-void MissileStatusManagerHandler::processLaunchedMissileStop()
+void MissileStatusManagerHandler::processInterceptSuccess()
 {
-	//STEP1: 유도탄 객체 모의 중지
-	nTimer->removeTask(timerHandle);
+	// STEP1: 유도탄 비행 모의 중지
+	if (timerHandle != 0) {
+		try {
+			nTimer->removeTask(timerHandle);
+		}
+		catch (const std::exception& e) {
+			std::cerr << "[Warning] Failed to remove timer task in MissileStatusManagerHandler: " << e.what() << std::endl;
+		}
+		timerHandle = 0; // 안전하게 초기화
+		// STEP2: 유도탄 객체 상태 변경
+		missileStatusNOM->setValue(_T("missileStatus"), &NCharacter('2')); // 요격 성공
+	}
 }
 
 /*
-* 시나리오 배포 후, 발사대 초기 위치 설정하는 함수
-* 매개변수: task NOM 메세지 (필요 없음)
-* 반환값:void
+* 요격 실패 시, 후 처리 함수
+* 매개변수: void
+* 반환값: void
+*/
+void MissileStatusManagerHandler::processInterceptFail()
+{
+	// STEP1: 유도탄 비행 모의 중지
+	if (timerHandle != 0) {
+		try {
+			nTimer->removeTask(timerHandle);
+		}
+		catch (const std::exception& e) {
+			std::cerr << "[Warning] Failed to remove timer task: " << e.what() << std::endl;
+		}
+		timerHandle = 0; // 안전하게 초기화
+		// STEP2: 유도탄 객체 상태 변경
+		missileStatusNOM->setValue(_T("missileStatus"), &NCharacter('3')); // 요격 실패
+	}
+}
+
+
+/*
+* 시나리오 배포 후, 발사대 위치 설정하는 함수
+* 매개변수: 발사대 위치 정보
+* 반환값: void
 */
 void MissileStatusManagerHandler::processLauncherPosition(std::shared_ptr<nframework::NOM> _launcherPosition)
 {
@@ -166,10 +170,18 @@ void MissileStatusManagerHandler::processLauncherPosition(std::shared_ptr<nframe
 	launcherPosition->setValue(_T("launcherX"), _launcherPosition->getValue(_T("launcherX")));
 	launcherPosition->setValue(_T("launcherY"), _launcherPosition->getValue(_T("launcherY")));
 	launcherPosition->setValue(_T("launcherZ"), _launcherPosition->getValue(_T("launcherZ")));
+
+	ntcout << _T("Receive LauncherPosition in MissileStatusManager!") << std::endl;
 }
 
+/*
+* 공중 위협 위치를 갱신하는 함수
+* 매개변수: 공중 위협 정보 NOM
+* 반환값: void
+*/
 void MissileStatusManagerHandler::processAirThreatInfo(std::shared_ptr<nframework::NOM> _airThreatInfoNOM)
 {
+	//Header
 	airThreatInfo->setValue(_T("msgId"), _airThreatInfoNOM->getValue(_T("msgId")));
 	airThreatInfo->setValue(_T("length"), _airThreatInfoNOM->getValue(_T("length")));
 	//Body
@@ -191,16 +203,23 @@ void MissileStatusManagerHandler::sendMissileCallback()
 {
 	//STEP1: 유도탄 객체 위치 및 속도 갱신
 	moveMissileTowardTarget(1);
-	//STEP2: 유도탄 정보 송신
+	//STEP2: 갱신된 유도탄 정보 송신
 	ntcout << _T("Send MissileStatus in MissileStatusManager!") << std::endl;
 	userMgr->updateMsg(missileStatusNOM);
 }
 
+/*
+* 목표 공중 위협으로 유도탄 위치를 갱신하는 함수
+* 매개변수: 유도탄 속도
+* 반환값: void
+*/
 void MissileStatusManagerHandler::moveMissileTowardTarget(double missileSpeed)
 {
-	if (!airThreatInfo)
+	if (airThreatInfo->getValue(_T("airThreatStatus"))->toUShort() == 2) { // 공중위협 폭파 시, 유도탄도 폭파 처리
+		processInterceptFail();
 		return;
-
+	}
+		
 	// 현재 좌표
 	double AT_x = airThreatInfo->getValue(_T("airThreatX"))->toDouble();
 	double AT_y = airThreatInfo->getValue(_T("airThreatY"))->toDouble();
@@ -225,12 +244,11 @@ void MissileStatusManagerHandler::moveMissileTowardTarget(double missileSpeed)
 	double dz = AT_z - GM_z;
 
 	double dist = std::sqrt(dx * dx + dy * dy + dz * dz);
-	if (dist < 3) {
+	if (dist < 0.3) {
 		ntcout << _T("Intercept decision in MissileStatusManager!") << std::endl;
-		missileStatusNOM->setValue(_T("missileStatus"), &NCharacter('2'));
-		processLaunchedMissileStop();
+		processInterceptSuccess();
 		sendInterceptResult(missileStatusNOM);
-		return; // 폭파 판정
+		return;
 	}
 	// 단위 벡터
 	double ux = dx / dist;
@@ -239,7 +257,7 @@ void MissileStatusManagerHandler::moveMissileTowardTarget(double missileSpeed)
 
 	// 이동 거리 = min(속도, 남은 거리)
 	double moveDist = missileSpeed;
-	moveDist = moveDist * 0.5; // 주기에 따라 변환
+	moveDist = moveDist * 0.3; // 주기에 따라 변환
 	GM_x += ux * moveDist;
 	GM_y += uy * moveDist;
 	GM_z += uz * moveDist;
@@ -254,9 +272,13 @@ void MissileStatusManagerHandler::moveMissileTowardTarget(double missileSpeed)
 	ntcout << missileStatusNOM->getValue(_T("missileX"))->toDouble() << std::endl;
 	ntcout << missileStatusNOM->getValue(_T("missileY"))->toDouble() << std::endl;
 	ntcout << missileStatusNOM->getValue(_T("missileZ"))->toDouble() << std::endl;
-
 }
 
+/*
+* 요격 결과 정보를 송신하는 함수
+* 매개변수: 유도탄 정보 NOM
+* 반환값: void
+*/
 void MissileStatusManagerHandler::sendInterceptResult(std::shared_ptr<nframework::NOM> _missileInfoNOM)
 {
 	std::shared_ptr<NOM> interceptResultNOM = meb->getNOMInstance(userMgr->getUserName(), _T("InterceptResult"));

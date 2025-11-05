@@ -19,8 +19,13 @@ ScenarioManagerHandler::~ScenarioManagerHandler()
 void ScenarioManagerHandler::initialize()
 {
 	std::function<void(std::shared_ptr<nframework::NOM>)> nomMsgProc;
+	
 	nomMsgProc = std::bind(&ScenarioManagerHandler::processSetScenario, this, std::placeholders::_1);
 	nomProcessorMap.insert(std::make_pair(_T("SetScenario"), nomMsgProc));
+
+	//내부 메시지
+	nomMsgProc = std::bind(&ScenarioManagerHandler::processSimulationMode, this, std::placeholders::_1);
+	nomProcessorMap.insert(std::make_pair(_T("SimulationMode"), nomMsgProc));
 }
 
 void ScenarioManagerHandler::release()
@@ -38,7 +43,7 @@ void ScenarioManagerHandler::processMessage(std::shared_ptr<nframework::NOM> nom
 	Busniess Logic
 ************************************************************************/
 /*
-* 시나리오를 저장하고 CSU로 송신하는 함수
+* 시나리오를 저장하는 함수
 * 매개변수: 시나리오 NOM 메세지
 * 반환값:void
 */
@@ -106,17 +111,28 @@ void ScenarioManagerHandler::processSetScenario(std::shared_ptr<nframework::NOM>
 
 	ntcout << _T("Send Scenario Deploy Status in ScenarioManager!") << std::endl;
 	userMgr->sendMsg(scenarioDeployStatusNOM);
+}
 
-	//STEP3: 발사대 초기 위치 정보만 추출
-	std::shared_ptr<NOM> launcherPositionNOM = meb->getNOMInstance(userMgr->getUserName(), _T("LauncherPosition"));
+/*
+* 시뮬레이션 모드 변경 시, 모의 시작 명령이라면, 시나리오 정보를 CSU로 송신하는 함수
+* 매개변수: 시나리오 NOM 메세지
+* 반환값:void
+*/
+void ScenarioManagerHandler::processSimulationMode(std::shared_ptr<nframework::NOM> _simulationMode)
+{
+	if (_simulationMode->getValue(_T("mode"))->toChar() == '1') { // 모의 시작 명령 시
+		//발사대 초기 위치 정보 추출
+		std::shared_ptr<NOM> launcherPositionNOM = meb->getNOMInstance(userMgr->getUserName(), _T("LauncherPosition"));
 
-	//Header
-	launcherPositionNOM->setValue(_T("msgId"), &NUShort(3304));
-	launcherPositionNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
+		//Header
+		launcherPositionNOM->setValue(_T("msgId"), &NUShort(3304));
+		launcherPositionNOM->setValue(_T("length"), &NUShort(3));  // 예: 총 메시지 길이 (필요 시 조정)
 
-	//Body
-	launcherPositionNOM->setValue(_T("launcherX"), _scenario->getValue(_T("launcherX")));
-	launcherPositionNOM->setValue(_T("launcherY"), _scenario->getValue(_T("launcherY")));
-	launcherPositionNOM->setValue(_T("launcherZ"), _scenario->getValue(_T("launcherZ")));
-	userMgr->sendMsg(launcherPositionNOM);
+		//Body
+		launcherPositionNOM->setValue(_T("launcherX"), scenario->getValue(_T("launcherX")));
+		launcherPositionNOM->setValue(_T("launcherY"), scenario->getValue(_T("launcherY")));
+		launcherPositionNOM->setValue(_T("launcherZ"), scenario->getValue(_T("launcherZ")));
+		
+		userMgr->sendMsg(launcherPositionNOM);
+	}
 }

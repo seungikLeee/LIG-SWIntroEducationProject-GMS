@@ -48,7 +48,7 @@ void SimulationControlManagerHandler::processMessage(std::shared_ptr<nframework:
 	Busniess Logic
 ************************************************************************/
 /*
-* 시뮬레이션 모드 변경 명령을 수신하고, 해당 시뮬레이션 모드를 저장하는 함수
+* 시뮬레이션 모드 변경 명령을 수신하고, 해당 시뮬레이션 모드를 저장 및 CSU로 송신하는 함수
 * 매개변수: 시뮬레이션 모드 NOM 메세지
 * 반환값:void
 */
@@ -56,14 +56,6 @@ void SimulationControlManagerHandler::processSetSimulationMode(std::shared_ptr<n
 {
 	ntcout << _T("[") << _T(__FUNCTION__) << _T("] ") << _simulationMode->getName() << std::endl;
 	ntcout << "Receive SetSimulationMode Info in SimulationControlManager!" << std::endl;
-
-	//auto msgId = _simulationMode->getValue(_T("msgId"))->toUShort();
-	//auto length = _simulationMode->getValue(_T("length"))->toUShort();
-	//auto mode = _simulationMode->getValue(_T("mode"))->toChar();
-
-	//ntcout << "msgId: " << msgId << std::endl;
-	//ntcout << "length: " << length << std::endl;
-	//ntcout << "mode: " << mode << std::endl;
 
 	if (scenarioDeployStatus != true) { // 현재 시나리오 배포 여부 판단
 		ntcerr << _T("[") << _T(__FUNCTION__) << _T("] ") << "scenario is not deployed." << std::endl;

@@ -15,6 +15,7 @@ public:
 public:
 	void processMessage(std::shared_ptr<nframework::NOM>);
 	void processSetScenario(std::shared_ptr<nframework::NOM>);
+	void processSimulationMode(std::shared_ptr<nframework::NOM>);
 	
 private:
 	void initialize();

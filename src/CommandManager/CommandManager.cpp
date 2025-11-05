@@ -248,9 +248,22 @@ CommandManager::start()
 			ntcout << _T("Before Launch in CommandManager!") << std::endl;
 			this->testLaunch();
 		}
+		else if (cmdStr == _T("detonate"))
+		{
+			ntcout << _T("Before Detonate AirThreat in CommandManager!") << std::endl;
+			this->testDetonate();
+		}
 		else if (cmdStr == _T("break"))
 		{
-			nTimer->removeTask(timerHandle);
+			if (timerHandle != 0) {
+				try {
+					nTimer->removeTask(timerHandle);
+				}
+				catch (const std::exception& e) {
+					std::cerr << "[Warning] Failed to remove timer task in CommandManager: " << e.what() << std::endl;
+				}
+				timerHandle = 0;
+			}
 		}
 		else if (cmdStr == _T("quit"))
 		{
@@ -364,7 +377,7 @@ void CommandManager::testStart()
 }
 
 void CommandManager::testEnd()
-{
+{	
 	std::shared_ptr<NOM> setSimModeNOM = meb->getNOMInstance(getUserName(), _T("SetSimulationMode"));
 
 	// Header
@@ -391,6 +404,12 @@ void CommandManager::testLaunch()
 
 	ntcout << _T("Send Launch Command in CommandManager!") << std::endl;
 	this->sendMsg(setSendGMSNOM);
+}
+
+void CommandManager::testDetonate()
+{
+	testAirThreatNOM->setValue(_T("airThreatStatus"), &NUShort(2));
+	this->updateMsg(testAirThreatNOM);
 }
 
 /************************************************************************
