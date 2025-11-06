@@ -73,7 +73,7 @@ void MissileStatusManagerHandler::processSimulationMode(std::shared_ptr<nframewo
 
 	if (_simulationMode->getValue(_T("mode"))->toChar() == '0') { // 값 체크 필요
 		ntcout << "Remove LaunchedMissile Update in MissileStatusManagerHandler!" << std::endl;
-		processInterceptFail();
+		processDeleteMissile();
 	}
 }
 
@@ -111,7 +111,8 @@ void MissileStatusManagerHandler::processLaunchMissile(std::shared_ptr<nframewor
 	
 	//STEP2: 1Hz 타이머 가동
 	STDFUNCTION periodicFunc = std::bind(&MissileStatusManagerHandler::sendMissileCallback, this);
-	timerHandle = nTimer->addPeriodicTask(40, periodicFunc);
+	timerHandle = nTimer->addPeriodicTask(80, periodicFunc);
+	//timerHandle = nTimer->addPeriodicTask(40, periodicFunc);
 }
 
 /*
@@ -163,6 +164,31 @@ void MissileStatusManagerHandler::processInterceptFail()
 		// 변경 상태 update
 		ntcout << _T("Send MissileStatus(InterceptFail) in MissileStatusManager!") << std::endl;
 		userMgr->updateMsg(missileStatusNOM);
+	}
+}
+
+/*
+* 모의 종료 시, 유도탄 정보 삭제 처리 함수
+* 매개변수: void
+* 반환값: void
+*/
+void MissileStatusManagerHandler::processDeleteMissile() 
+{
+	// 유도탄 비행 모의 중지
+	if (timerHandle != 0) {
+		try {
+			nTimer->removeTask(timerHandle);
+		}
+		catch (const std::exception& e) {
+			std::cerr << "[Warning] Failed to remove timer task: " << e.what() << std::endl;
+		}
+		timerHandle = 0; // 안전하게 초기화
+
+		// 유도탄 객체 상태 변경
+		userMgr->deleteMsg(missileStatusNOM);
+
+		// 변경 상태 update
+		ntcout << _T("Missile Delete in MissileStatusManager!") << std::endl;
 	}
 }
 
@@ -263,7 +289,9 @@ void MissileStatusManagerHandler::moveMissileTowardTarget(double missileSpeed)
 
 	// 이동 거리 = min(속도, 남은 거리)
 	double moveDist = missileSpeed;
-	moveDist = moveDist * 0.3; // 주기에 따라 변환
+	moveDist = moveDist * 0.5;
+	//moveDist = moveDist * 0.5; // 주기에 따라 변환
+	//moveDist = moveDist * 0.08;
 	GM_x += ux * moveDist;
 	GM_y += uy * moveDist;
 	GM_z += uz * moveDist;

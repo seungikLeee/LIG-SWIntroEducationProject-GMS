@@ -21,6 +21,7 @@ public:
 	void processLaunchMissile(std::shared_ptr<nframework::NOM>);
 	void processInterceptSuccess();
 	void processInterceptFail();
+	void processDeleteMissile();
 	
 private:
 	void initialize();
